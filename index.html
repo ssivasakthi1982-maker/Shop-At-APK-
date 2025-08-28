@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop At APK - Buy & Sell in Your City</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter for clean typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to complement Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light gray background */
+        }
+        /* Custom gradient for the header and buttons */
+        .gradient-primary {
+            background-image: linear-gradient(135deg, #ef4444, #f97316);
+        }
+        .gradient-secondary {
+            background-image: linear-gradient(135deg, #3b82f6, #22d3ee);
+        }
+        /* Style for modals to ensure they are centered and have a backdrop */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Animation for modal content */
+        .modal-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="gradient-primary text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold tracking-wider flex items-center">
+                <i class="fas fa-store mr-2"></i>Shop At APK
+            </h1>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#" class="hover:text-yellow-300 transition duration-300">Home</a>
+                <a href="#categories" class="hover:text-yellow-300 transition duration-300">Categories</a>
+                <a href="#" id="sell-nav-link" class="hover:text-yellow-300 transition duration-300 hidden">Sell</a>
+                <a href="#" id="orders-nav-link" class="hover:text-yellow-300 transition duration-300 hidden">Orders</a>
+                <a href="#" onclick="openAboutModal()" class="hover:text-yellow-300 transition duration-300">About</a>
+            </nav>
+            <div id="auth-buttons" class="flex items-center space-x-3">
+                <button onclick="openRegisterModal()" class="bg-white text-red-500 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300 transform hover:scale-105">Register</button>
+                <button onclick="openLoginModal()" class="bg-yellow-400 text-red-800 font-bold py-2 px-4 rounded-full hover:bg-yellow-300 transition duration-300 transform hover:scale-105">Login</button>
+            </div>
+            <div id="user-profile" class="hidden items-center space-x-3">
+                <span id="user-greeting" class="font-semibold"></span>
+                <button onclick="logout()" class="bg-white text-red-500 font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-96 text-white flex items-center justify-center text-center">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://placehold.co/1200x400/ef4444/ffffff?text=Local+Marketplace');">
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+        </div>
+        <div class="relative z-10 p-4">
+            <h2 class="text-5xl font-extrabold mb-4">Buy & Sell Anything in Your City</h2>
+            <p class="text-xl mb-6">Discover amazing deals from local sellers, right at your fingertips.</p>
+            <a href="#products" class="bg-yellow-400 text-red-800 font-bold py-3 px-8 rounded-full text-lg hover:bg-yellow-300 transition duration-300 transform hover:scale-105">Explore Products</a>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-4xl font-bold mb-2 text-gray-800">Shop by Category</h3>
+            <div class="w-24 h-1.5 gradient-primary mx-auto mb-10 rounded-full"></div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <!-- Category Cards -->
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                    <i class="fas fa-tshirt text-5xl text-red-500 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-700">Textiles</h4>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                    <i class="fas fa-utensils text-5xl text-orange-500 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-700">Groceries</h4>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                    <i class="fas fa-shoe-prints text-5xl text-blue-500 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-700">Footwear</h4>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                    <i class="fas fa-gem text-5xl text-purple-500 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-700">Accessories</h4>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
+                    <i class="fas fa-home text-5xl text-green-500 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-700">Home</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16">
+        <div class="container mx-auto px-4">
+            <h3 class="text-4xl font-bold mb-2 text-gray-800 text-center">Featured Products</h3>
+            <div class="w-24 h-1.5 gradient-primary mx-auto mb-10 rounded-full"></div>
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product cards will be dynamically inserted here -->
+                <p id="no-products-message" class="text-center text-gray-500 col-span-full">No products listed yet. Be the first to sell!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-10 pb-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 Shop At APK. All rights reserved.</p>
+            <p>Done By : Rahul Raj and Guru Prakash</p>
+            <p>Speacially for Aruppukottai</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
+                <button onclick="closeModal('registerModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 mb-4">
+                <nav class="-mb-px flex space-x-6" id="register-tabs">
+                    <button class="tab-btn py-4 px-1 border-b-2 border-red-500 font-semibold text-red-600" data-tab="buyer">Buyer</button>
+                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="seller">Seller</button>
+                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="delivery">Delivery</button>
+                </nav>
+            </div>
+            <!-- Form -->
+            <form id="registerForm">
+                <input type="hidden" id="userType" value="buyer">
+                <div class="space-y-4">
+                    <div>
+                        <label for="register-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="register-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="register-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input type="email" id="register-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="register-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 gradient-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition duration-300">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Login</h2>
+                <button onclick="closeModal('loginModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input type="email" id="login-email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="login-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 gradient-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition duration-300">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Address & Details Modal -->
+    <div id="detailsModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Complete Your Profile</h2>
+                <button onclick="closeModal('detailsModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <form id="detailsForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="tel" id="phone" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                        <input type="text" id="city" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="colony" class="block text-sm font-medium text-gray-700">Colony/Area</label>
+                        <input type="text" id="colony" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="street" class="block text-sm font-medium text-gray-700">Street</label>
+                        <input type="text" id="street" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="doorNo" class="block text-sm font-medium text-gray-700">Door No./Building</label>
+                        <input type="text" id="doorNo" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 gradient-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition duration-300">Complete Registration</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+             <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Add a New Product</h2>
+                <button onclick="closeModal('addProductModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <form id="addProductForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                        <input type="text" id="product-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="product-description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="product-description" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"></textarea>
+                    </div>
+                    <div>
+                        <label for="product-price" class="block text-sm font-medium text-gray-700">Price (₹)</label>
+                        <input type="number" id="product-price" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                    <div>
+                        <label for="product-category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="product-category" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                            <option value="Textiles">Textiles</option>
+                            <option value="Eatables">Eatables</option>
+                            <option value="Footwear">Footwear</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Home">Home</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label for="product-image" class="block text-sm font-medium text-gray-700">Image URL</label>
+                        <input type="url" id="product-image" required placeholder="https://example.com/image.png" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-6 gradient-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition duration-300">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders Modal -->
+    <div id="ordersModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">My Orders</h2>
+                <button onclick="closeModal('ordersModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="orders-content">
+                <!-- Orders will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Detail Modal -->
+    <div id="productDetailModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <!-- Content will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content bg-white p-8 rounded-lg shadow-2xl w-full max-w-md text-center">
+            <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">About Shop At APK</h2>
+            <p class="text-lg font-semibold text-gray-600">Done By : Rahul Raj & Guru Prakash</p>
+        </div>
+    </div>
+    
+    <!-- Custom Alert/Message Box -->
+    <div id="messageBox" class="hidden fixed top-5 right-5 z-[1001] bg-green-500 text-white py-3 px-5 rounded-lg shadow-lg animate-pulse">
+        <p id="messageText"></p>
+    </div>
+
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Firebase configuration - replace with your own project config
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Import statements for Firebase services
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut,
+            signInWithCustomToken,
+            signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            collection, 
+            addDoc,
+            getDocs,
+            onSnapshot,
+            query,
+            where,
+            updateDoc,
+            arrayUnion
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- GLOBAL STATE ---
+        let currentUser = null;
+        let currentUserData = null;
+        let tempAuthData = null; // To hold data between registration steps
+
+        // --- UI ELEMENT REFERENCES ---
+        const authButtons = document.getElementById('auth-buttons');
+        const userProfile = document.getElementById('user-profile');
+        const userGreeting = document.getElementById('user-greeting');
+        const sellNavLink = document.getElementById('sell-nav-link');
+        const ordersNavLink = document.getElementById('orders-nav-link');
+
+        // --- MODAL & UI FUNCTIONS ---
+        window.openRegisterModal = () => document.getElementById('registerModal').style.display = 'flex';
+        window.openLoginModal = () => document.getElementById('loginModal').style.display = 'flex';
+        window.openAboutModal = () => document.getElementById('aboutModal').style.display = 'flex';
+        window.closeModal = (modalId) => document.getElementById(modalId).style.display = 'none';
+
+        function showMessage(message, isError = false) {
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            messageText.textContent = message;
+            messageBox.className = `fixed top-5 right-5 z-[1001] text-white py-3 px-5 rounded-lg shadow-lg ${isError ? 'bg-red-500' : 'bg-green-500'}`;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        // --- AUTHENTICATION LOGIC ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    currentUserData = userDoc.data();
+                    updateUIForLoggedInUser();
+                } else {
+                    // This case handles the multi-step registration
+                    openDetailsModal();
+                }
+            } else {
+                currentUser = null;
+                currentUserData = null;
+                updateUIForLoggedOutUser();
+            }
+            fetchProducts();
+        });
+
+        // Sign in with custom token or anonymously
+        async function initializeAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Authentication initialization failed:", error);
+                showMessage("Could not connect to the service.", true);
+            }
+        }
+        initializeAuth();
+
+
+        // --- UI UPDATE FUNCTIONS ---
+        function updateUIForLoggedInUser() {
+            authButtons.classList.add('hidden');
+            userProfile.classList.remove('hidden');
+            userProfile.classList.add('flex');
+            userGreeting.textContent = `Hi, ${currentUserData.name.split(' ')[0]}`;
+
+            if (currentUserData.role === 'seller') {
+                sellNavLink.classList.remove('hidden');
+                sellNavLink.onclick = () => openAddProductModal();
+            }
+            ordersNavLink.classList.remove('hidden');
+            ordersNavLink.onclick = () => openOrdersModal();
+        }
+
+        function updateUIForLoggedOutUser() {
+            authButtons.classList.remove('hidden');
+            userProfile.classList.add('hidden');
+            userGreeting.textContent = '';
+            sellNavLink.classList.add('hidden');
+            ordersNavLink.classList.add('hidden');
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Registration Tab Switching
+        document.getElementById('register-tabs').addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-btn')) {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('border-red-500', 'text-red-600');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+                e.target.classList.add('border-red-500', 'text-red-600');
+                e.target.classList.remove('border-transparent', 'text-gray-500');
+                document.getElementById('userType').value = e.target.dataset.tab;
+            }
+        });
+
+        // Registration Form (Step 1)
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const role = document.getElementById('userType').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                tempAuthData = { uid: userCredential.user.uid, email, name, role };
+                closeModal('registerModal');
+                openDetailsModal();
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        });
+        
+        function openDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        // Registration Form (Step 2 - Details)
+        document.getElementById('detailsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!tempAuthData && !currentUser) {
+                showMessage("Authentication error. Please start registration again.", true);
+                return;
+            }
+            
+            const uid = tempAuthData ? tempAuthData.uid : currentUser.uid;
+            const name = tempAuthData ? tempAuthData.name : currentUserData.name; // Use existing if available
+            const email = tempAuthData ? tempAuthData.email : currentUserData.email;
+            const role = tempAuthData ? tempAuthData.role : currentUserData.role;
+
+            const userData = {
+                name: name,
+                email: email,
+                role: role,
+                phone: document.getElementById('phone').value,
+                address: {
+                    city: document.getElementById('city').value,
+                    colony: document.getElementById('colony').value,
+                    street: document.getElementById('street').value,
+                    doorNo: document.getElementById('doorNo').value,
+                }
+            };
+
+            try {
+                await setDoc(doc(db, "users", uid), userData);
+                currentUserData = userData; // Update local state
+                tempAuthData = null; // Clear temporary data
+                closeModal('detailsModal');
+                showMessage("Registration successful!");
+                updateUIForLoggedInUser();
+            } catch (error) {                showMessage(error.message, true);
+            }
+        });
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // CORRECTED: Changed the invalid IDs to standard ones.
+            // Ensure your HTML input fields have id="login-email" and id="login-password".
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeModal('loginModal');
+                showMessage("Logged in successfully!");
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        });
+
+        // Logout
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                showMessage("Logged out successfully!");
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        };
+
+        // --- PRODUCT MANAGEMENT ---
+
+        function openAddProductModal() {
+            document.getElementById('addProductModal').style.display = 'flex';
+        }
+
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser || currentUserData.role !== 'seller') {
+                showMessage("You must be logged in as a seller to add products.", true);
+                return;
+            }
+            
+            const product = {
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                category: document.getElementById('product-category').value,
+                imageUrl: document.getElementById('product-image').value,
+                sellerId: currentUser.uid,
+                sellerName: currentUserData.name,
+                createdAt: new Date(),
+                reviews: []
+            };
+
+            try {
+                await addDoc(collection(db, "products"), product);
+                showMessage("Product added successfully!");
+                closeModal('addProductModal');
+                document.getElementById('addProductForm').reset();
+                fetchProducts(); // Refresh product list
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        });
+
+        // Fetch and display products
+        async function fetchProducts() {
+            const productGrid = document.getElementById('product-grid');
+            const noProductsMessage = document.getElementById('no-products-message');
+            const productsCollection = collection(db, "products");
+            
+            onSnapshot(productsCollection, (snapshot) => {
+                productGrid.innerHTML = ''; // Clear existing products
+                if (snapshot.empty) {
+                    noProductsMessage.style.display = 'block';
+                } else {
+                    noProductsMessage.style.display = 'none';
+                    snapshot.forEach(doc => {
+                        const product = doc.data();
+                        const productId = doc.id;
+                        const card = createProductCard(product, productId);
+                        productGrid.appendChild(card);
+                    });
+                }
+            });
+        }
+        
+        function createProductCard(product, productId) {
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 flex flex-col";
+            
+            // Calculate average rating
+            let avgRating = 0;
+            if (product.reviews && product.reviews.length > 0) {
+                const totalRating = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+                avgRating = totalRating / product.reviews.length;
+            }
+
+            card.innerHTML = `
+                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Image+Not+Found';">
+                <div class="p-4 flex flex-col flex-grow">
+                    <h3 class="text-lg font-bold text-gray-800 truncate">${product.name}</h3>
+                    <p class="text-sm text-gray-500 mb-2">By ${product.sellerName}</p>
+                    <div class="text-yellow-500 mb-2">
+                        ${getStarRating(avgRating)}
+                        <span class="text-xs text-gray-500 ml-1">(${product.reviews.length} reviews)</span>
+                    </div>
+                    <p class="text-2xl font-extrabold text-red-600 mt-auto">₹${product.price}</p>
+                </div>
+            `;
+            card.onclick = () => openProductDetailModal(productId);
+            return card;
+        }
+        
+        function getStarRating(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // --- PRODUCT DETAIL & ORDERING ---
+        async function openProductDetailModal(productId) {
+            const modal = document.getElementById('productDetailModal');
+            const content = modal.querySelector('.modal-content');
+            
+            try {
+                const productDoc = await getDoc(doc(db, "products", productId));
+                if (!productDoc.exists()) {
+                    showMessage("Product not found.", true);
+                    return;
+                }
+                const product = productDoc.data();
+                
+                content.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">${product.name}</h2>
+                        <button onclick="closeModal('productDetailModal')" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-64 object-cover rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Image+Not+Found';">
+                        </div>
+                        <div>
+                            <p class="text-gray-600 mb-4">${product.description}</p>
+                            <p class="text-sm text-gray-500 mb-2">Sold by: <strong>${product.sellerName}</strong></p>
+                            <p class="text-4xl font-extrabold text-red-600 mb-6">₹${product.price}</p>
+                            ${currentUser && currentUserData.role === 'buyer' ? `<button onclick="placeOrder('${productId}')" class="w-full gradient-primary text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 transition duration-300">Place Order</button>` : ''}
+                        </div>
+                    </div>
+                    <hr class="my-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Reviews</h3>
+                        <div id="reviews-list" class="space-y-4 mb-6">
+                            ${product.reviews.length > 0 ? product.reviews.map(r => `
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="flex items-center mb-1">
+                                        <p class="font-semibold mr-2">${r.buyerName}</p>
+                                        <div class="text-yellow-500 text-sm">${getStarRating(r.rating)}</div>
+                                    </div>
+                                    <p class="text-gray-700">${r.comment}</p>
+                                </div>
+                            `).join('') : '<p class="text-gray-500">No reviews yet.</p>'}
+                        </div>
+                        ${currentUser && currentUserData.role === 'buyer' ? `
+                        <form id="reviewForm" class="bg-gray-100 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Leave a Review</h4>
+                            <div class="flex items-center mb-2">
+                                <label class="mr-2">Rating:</label>
+                                <select id="review-rating" class="border border-gray-300 rounded-md p-1">
+                                    <option value="5">5 Stars</option>
+                                    <option value="4">4 Stars</option>
+                                    <option value="3">3 Stars</option>
+                                    <option value="2">2 Stars</option>
+                                    <option value="1">1 Star</option>
+                                </select>
+                            </div>
+                            <textarea id="review-comment" placeholder="Your comment..." rows="2" required class="w-full p-2 border border-gray-300 rounded-md mb-2"></textarea>
+                            <button type="submit" onclick="submitReview(event, '${productId}')" class="gradient-secondary text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90">Submit Review</button>
+                        </form>
+                        ` : ''}
+                    </div>
+                `;
+                modal.style.display = 'flex';
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        window.submitReview = async (event, productId) => {
+            event.preventDefault();
+            const rating = parseInt(document.getElementById('review-rating').value);
+            const comment = document.getElementById('review-comment').value;
+
+            if (!comment) {
+                showMessage("Please enter a comment.", true);
+                return;
+            }
+
+            const review = {
+                buyerId: currentUser.uid,
+                buyerName: currentUserData.name,
+                rating,
+                comment,
+                createdAt: new Date()
+            };
+
+            try {
+                const productRef = doc(db, "products", productId);
+                await updateDoc(productRef, {
+                    reviews: arrayUnion(review)
+                });
+                showMessage("Review submitted!");
+                closeModal('productDetailModal');
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        };
+
+        window.placeOrder = async (productId) => {
+            if (!currentUser || !currentUserData || currentUserData.role !== 'buyer') {
+                showMessage("Please log in as a buyer to place an order.", true);
+                return;
+            }
+
+            try {
+                const productDoc = await getDoc(doc(db, "products", productId));
+                if (!productDoc.exists()) {
+                    showMessage("This product is no longer available.", true);
+                    return;
+                }
+                const product = productDoc.data();
+
+                const order = {
+                    buyerId: currentUser.uid,
+                    buyerName: currentUserData.name,
+                    buyerAddress: currentUserData.address,
+                    sellerId: product.sellerId,
+                    productId: productId,
+                    productName: product.name,
+                    productPrice: product.price,
+                    status: 'Placed', // Placed -> Accepted -> Out for Delivery -> Delivered
+                    deliveryPartnerId: null,
+                    deliveryPartnerName: null,
+                    createdAt: new Date()
+                };
+
+                await addDoc(collection(db, "orders"), order);
+                showMessage("Order placed successfully!");
+                closeModal('productDetailModal');
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        };
+        
+        // --- ORDERS VIEW ---
+        function openOrdersModal() {
+            const ordersContent = document.getElementById('orders-content');
+            ordersContent.innerHTML = '<p>Loading orders...</p>';
+            document.getElementById('ordersModal').style.display = 'flex';
+            
+            let ordersQuery;
+            const role = currentUserData.role;
+
+            if (role === 'buyer') {
+                ordersQuery = query(collection(db, "orders"), where("buyerId", "==", currentUser.uid));
+            } else if (role === 'seller') {
+                ordersQuery = query(collection(db, "orders"), where("sellerId", "==", currentUser.uid));
+            } else if (role === 'delivery') {
+                // NOTE: This query requires a composite index in Firestore.
+                // The error message in the browser console will provide a link to create it.
+                ordersQuery = query(collection(db, "orders"), where("status", "in", ["Placed", "Accepted", "Out for Delivery"]), where("deliveryPartnerId", "in", [null, currentUser.uid]));
+            }
+
+            onSnapshot(ordersQuery, (snapshot) => {
+                if (snapshot.empty) {
+                    ordersContent.innerHTML = '<p>No orders found.</p>';
+                    return;
+                }
+                
+                let html = '<div class="space-y-4">';
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    const orderId = doc.id;
+                    html += createOrderCard(order, orderId, role);
+                });
+                html += '</div>';
+                ordersContent.innerHTML = html;
+            });
+        }
+
+        function createOrderCard(order, orderId, role) {
+            let actionButton = '';
+            if (role === 'delivery' && order.status === 'Placed') {
+                actionButton = `<button onclick="acceptOrder('${orderId}')" class="bg-green-500 text-white font-semibold py-1 px-3 rounded-md hover:bg-green-600">Accept</button>`;
+            } else if (role === 'delivery' && order.status === 'Accepted' && order.deliveryPartnerId === currentUser.uid) {
+                actionButton = `<button onclick="updateOrderStatus('${orderId}', 'Out for Delivery')" class="bg-blue-500 text-white font-semibold py-1 px-3 rounded-md hover:bg-blue-600">Out for Delivery</button>`;
+            } else if (role === 'delivery' && order.status === 'Out for Delivery' && order.deliveryPartnerId === currentUser.uid) {
+                actionButton = `<button onclick="updateOrderStatus('${orderId}', 'Delivered')" class="bg-purple-500 text-white font-semibold py-1 px-3 rounded-md hover:bg-purple-600">Mark as Delivered</button>`;
+            }
+
+            const address = order.buyerAddress;
+            const fullAddress = `${address.doorNo}, ${address.street}, ${address.colony}, ${address.city}`;
+
+            return `
+                <div class="bg-gray-50 p-4 rounded-lg shadow-sm border">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold text-lg">${order.productName}</p>
+                            <p class="text-sm text-gray-600">Order ID: ${orderId}</p>
+                            <p class="text-sm text-gray-600">Buyer: ${order.buyerName}</p>
+                            <p class="text-sm text-gray-600">Address: ${fullAddress}</p>
+                            ${order.deliveryPartnerName ? `<p class="text-sm text-gray-600">Delivery by: ${order.deliveryPartnerName}</p>` : ''}
+                        </div>
+                        <div class="text-right">
+                           <p class="font-bold text-xl text-red-600">₹${order.productPrice}</p>
+                           <p class="text-sm font-semibold px-2 py-1 rounded-full
+                                ${order.status === 'Delivered' ? 'bg-green-200 text-green-800' : 
+                                  order.status === 'Placed' ? 'bg-yellow-200 text-yellow-800' : 'bg-blue-200 text-blue-800'}
+                           ">${order.status}</p>
+                           <div class="mt-2">${actionButton}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.acceptOrder = async (orderId) => {
+            const orderRef = doc(db, "orders", orderId);
+            try {
+                await updateDoc(orderRef, {
+                    status: 'Accepted',
+                    deliveryPartnerId: currentUser.uid,
+                    deliveryPartnerName: currentUserData.name
+                });
+                showMessage("Order accepted!");
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        };
+
+        window.updateOrderStatus = async (orderId, newStatus) => {
+            const orderRef = doc(db, "orders", orderId);
+            try {
+                await updateDoc(orderRef, { status: newStatus });
+                showMessage(`Order status updated to ${newStatus}`);
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        };
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>
